@@ -729,3 +729,44 @@ get_strong_ciphersuites_for() {
 }
 
 main "$@" || exit 1
+
+# cargo -> crabgo
+# rustup -> crabup
+# rustc -> crabc
+# rustdoc -> crabdoc
+# rustfmt -> crabfmt
+
+path_to_rustup=$(which rustup)
+path_to_bin=$(dirname "$path_to_rustup")
+
+# add crabup
+path_to_crabup="$path_to_bin/crabup"
+touch $path_to_crabup
+chmod u+x "$path_to_crabup"
+echo "rustup" > "$path_to_crabup"
+
+# add crabgo
+path_to_crabgo="$path_to_bin/crabgo"
+touch $path_to_crabgo
+chmod u+x "$path_to_crabgo"
+echo "cargo" > "$path_to_crabgo"
+
+# add crabc
+path_to_crabc="$path_to_bin/crabc"
+touch $path_to_crabc
+chmod u+x "$path_to_crabc"
+echo "rustc" > "$path_to_crabc"
+
+# add crabdoc
+path_to_crabdoc="$path_to_bin/crabdoc"
+touch $path_to_crabdoc
+chmod u+x "$path_to_crabdoc"
+echo "rustdoc" > "$path_to_crabdoc"
+
+# add crabfmt
+path_to_crabfmt="$path_to_bin/crabfmt"
+touch $path_to_crabfmt
+chmod u+x "$path_to_crabfmt"
+echo "rustfmt" > "$path_to_crabfmt"
+
+echo "Successfully installed crab toolchain."
