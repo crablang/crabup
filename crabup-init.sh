@@ -12,7 +12,7 @@ if [ "$KSH_VERSION" = 'Version JM 93t+ 2010-03-05' ]; then
     # The version of ksh93 that ships with many illumos systems does not
     # support the "local" extension.  Print a message rather than fail in
     # subtle ways later on:
-    echo 'rustup does not work with this ksh93 version; please try bash!' >&2
+    echo 'crabup does not work with this ksh93 version; please try bash!' >&2
     exit 1
 fi
 
