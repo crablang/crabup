@@ -12,7 +12,7 @@ if [ "$KSH_VERSION" = 'Version JM 93t+ 2010-03-05' ]; then
     # The version of ksh93 that ships with many illumos systems does not
     # support the "local" extension.  Print a message rather than fail in
     # subtle ways later on:
-    echo 'rustup does not work with this ksh93 version; please try bash!' >&2
+    echo 'crabup does not work with this ksh93 version; please try bash!' >&2
     exit 1
 fi
 
@@ -25,11 +25,11 @@ RUSTUP_UPDATE_ROOT="${RUSTUP_UPDATE_ROOT:-https://static.rust-lang.org/rustup}"
 # NOTICE: If you change anything here, please make the same changes in setup_mode.rs
 usage() {
     cat <<EOF
-rustup-init 1.25.2 (8c4dad73d 2023-02-01)
-The installer for rustup
+crabup-init 1.25.2 (8c4dad73d 2023-02-01)
+The installer for crabup
 
 USAGE:
-    rustup-init [OPTIONS]
+    crabup-init [OPTIONS]
 
 OPTIONS:
     -v, --verbose
@@ -728,4 +728,83 @@ get_strong_ciphersuites_for() {
     fi
 }
 
-main "$@" || exit 1
+replace_script=$(cat<<-CRAB
+while IFS= read -r line
+do
+    # rename
+    output=\${line//rust/crab}
+    output=\${output//Rust/Crab}
+    output=\${output//RUST/CRAB}
+    output=\${output//cargo/crabgo}
+    output=\${output//Cargo/Crabgo}
+    output=\${output//CARGO/CRABGO}
+
+    # clean up
+    output=\${output//.crabgo/.cargo}
+    output=\${output//Crabgo.lock/Cargo.toml}
+    output=\${output//Crabgo.lock/Cargo.lock}
+
+    # print
+    echo "\${output}"
+done
+CRAB
+)
+replace_script="{\n$replace_script\n}"
+
+replace_with_crab() {
+    while IFS= read -r line
+    do
+        # rename
+        output=${line//rust/crab}
+        output=${output//Rust/Crab}
+        output=${output//RUST/CRAB}
+        output=${output//cargo/crabgo}
+        output=${output//Cargo/Crabgo}
+        output=${output//CARGO/CRABGO}
+
+        # clean up
+        output=${output//.crabgo/.cargo}
+        output=${output//Crabgo.lock/Cargo.toml}
+        output=${output//Crabgo.lock/Cargo.lock}
+        output=${output//crabgo.toml/cargo.toml}
+        output=${output//.crabup/.rustup}
+
+        echo "${output}"
+    done
+}
+
+# install
+(main "$@" || exit 1) | replace_with_crab
+
+path_to_rustup=$(which rustup)
+path_to_bin=$(dirname "$path_to_rustup")
+
+# add crabup
+path_to_crabup="$path_to_bin/crabup"
+touch $path_to_crabup
+chmod u+x "$path_to_crabup"
+echo "rustup \$@ | $replace_script" > "$path_to_crabup"
+
+# add crabgo
+path_to_crabgo="$path_to_bin/crabgo"
+touch $path_to_crabgo
+chmod u+x "$path_to_crabgo"
+echo "cargo \$@ | $replace_script" > "$path_to_crabgo"
+
+# add crabc
+path_to_crabc="$path_to_bin/crabc"
+touch $path_to_crabc
+chmod u+x "$path_to_crabc"
+echo "rustc \$@ | $replace_script" > "$path_to_crabc"
+
+# add crabdoc
+path_to_crabdoc="$path_to_bin/crabdoc"
+touch $path_to_crabdoc
+chmod u+x "$path_to_crabdoc"
+echo "rustdoc \$@ | $replace_script" > "$path_to_crabdoc"
+
+# add crabfmt
+path_to_crabfmt="$path_to_bin/crabfmt"
+touch $path_to_crabfmt
+chmod u+x "$path_to_crabfmt"
+echo "rustfmt \$@ | $replace_script" > "$path_to_crabfmt"
